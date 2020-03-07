@@ -1,0 +1,27 @@
+syntax = "proto3";
+
+package db;
+
+// In memory DB definition.
+service DB {
+  // Search record.
+  rpc Search (Value) returns (Records) {}
+  // Update record.
+  rpc Update(Records) returns (Records) {}
+}
+
+// DB records.
+message Records {
+  repeated Record records = 1;
+}
+
+// DB record which contains index and value.
+message Record {
+  int32 index = 1;
+  int32 value = 2;
+}
+
+// The value of record.
+message Value {
+  int32 value = 1;
+}
