@@ -2,6 +2,7 @@
 import grpc
 
 import db_pb2 as db__pb2
+from google.protobuf import empty_pb2 as google_dot_protobuf_dot_empty__pb2
 
 
 class DBStub(object):
@@ -22,7 +23,7 @@ class DBStub(object):
     self.Update = channel.unary_unary(
         '/db.DB/Update',
         request_serializer=db__pb2.Records.SerializeToString,
-        response_deserializer=db__pb2.Records.FromString,
+        response_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
         )
 
 
@@ -55,7 +56,7 @@ def add_DBServicer_to_server(servicer, server):
       'Update': grpc.unary_unary_rpc_method_handler(
           servicer.Update,
           request_deserializer=db__pb2.Records.FromString,
-          response_serializer=db__pb2.Records.SerializeToString,
+          response_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
       ),
   }
   generic_handler = grpc.method_handlers_generic_handler(

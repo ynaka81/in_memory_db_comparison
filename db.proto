@@ -1,5 +1,7 @@
 syntax = "proto3";
 
+import "google/protobuf/empty.proto";
+
 package db;
 
 // In memory DB definition.
@@ -7,7 +9,7 @@ service DB {
   // Search record.
   rpc Search (Value) returns (Records) {}
   // Update record.
-  rpc Update(Records) returns (Records) {}
+  rpc Update(Records) returns (google.protobuf.Empty) {}
 }
 
 // DB records.

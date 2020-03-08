@@ -9,6 +9,7 @@ import (
 	"sync"
 
 	"google.golang.org/grpc"
+	empty "github.com/golang/protobuf/ptypes/empty"
 	pb "./pb"
 )
 
@@ -47,13 +48,13 @@ func (s *Server) Search(ctx context.Context, in *pb.Value) (*pb.Records, error) 
 	return &pb.Records{Records: records}, nil
 }
 
-func (s *Server) Update(ctx context.Context, in *pb.Records) (*pb.Records, error) {
+func (s *Server) Update(ctx context.Context, in *pb.Records) (*empty.Empty, error) {
 	s.Lock()
 	for _, record := range in.GetRecords() {
 		s.records[record.GetIndex()] = record.GetValue()
 	}
 	s.Unlock()
-	return in, nil
+	return &empty.Empty{}, nil
 }
 
 // Run gRPC server.

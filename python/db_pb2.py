@@ -11,6 +11,7 @@ from google.protobuf import symbol_database as _symbol_database
 _sym_db = _symbol_database.Default()
 
 
+from google.protobuf import empty_pb2 as google_dot_protobuf_dot_empty__pb2
 
 
 DESCRIPTOR = _descriptor.FileDescriptor(
@@ -18,8 +19,9 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   package='db',
   syntax='proto3',
   serialized_options=None,
-  serialized_pb=b'\n\x08\x64\x62.proto\x12\x02\x64\x62\"&\n\x07Records\x12\x1b\n\x07records\x18\x01 \x03(\x0b\x32\n.db.Record\"&\n\x06Record\x12\r\n\x05index\x18\x01 \x01(\x05\x12\r\n\x05value\x18\x02 \x01(\x05\"\x16\n\x05Value\x12\r\n\x05value\x18\x01 \x01(\x05\x32N\n\x02\x44\x42\x12\"\n\x06Search\x12\t.db.Value\x1a\x0b.db.Records\"\x00\x12$\n\x06Update\x12\x0b.db.Records\x1a\x0b.db.Records\"\x00\x62\x06proto3'
-)
+  serialized_pb=b'\n\x08\x64\x62.proto\x12\x02\x64\x62\x1a\x1bgoogle/protobuf/empty.proto\"&\n\x07Records\x12\x1b\n\x07records\x18\x01 \x03(\x0b\x32\n.db.Record\"&\n\x06Record\x12\r\n\x05index\x18\x01 \x01(\x05\x12\r\n\x05value\x18\x02 \x01(\x05\"\x16\n\x05Value\x12\r\n\x05value\x18\x01 \x01(\x05\x32Y\n\x02\x44\x42\x12\"\n\x06Search\x12\t.db.Value\x1a\x0b.db.Records\"\x00\x12/\n\x06Update\x12\x0b.db.Records\x1a\x16.google.protobuf.Empty\"\x00\x62\x06proto3'
+  ,
+  dependencies=[google_dot_protobuf_dot_empty__pb2.DESCRIPTOR,])
 
 
 
@@ -50,8 +52,8 @@ _RECORDS = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=16,
-  serialized_end=54,
+  serialized_start=45,
+  serialized_end=83,
 )
 
 
@@ -88,8 +90,8 @@ _RECORD = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=56,
-  serialized_end=94,
+  serialized_start=85,
+  serialized_end=123,
 )
 
 
@@ -119,8 +121,8 @@ _VALUE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=96,
-  serialized_end=118,
+  serialized_start=125,
+  serialized_end=147,
 )
 
 _RECORDS.fields_by_name['records'].message_type = _RECORD
@@ -158,8 +160,8 @@ _DB = _descriptor.ServiceDescriptor(
   file=DESCRIPTOR,
   index=0,
   serialized_options=None,
-  serialized_start=120,
-  serialized_end=198,
+  serialized_start=149,
+  serialized_end=238,
   methods=[
   _descriptor.MethodDescriptor(
     name='Search',
@@ -176,7 +178,7 @@ _DB = _descriptor.ServiceDescriptor(
     index=1,
     containing_service=None,
     input_type=_RECORDS,
-    output_type=_RECORDS,
+    output_type=google_dot_protobuf_dot_empty__pb2._EMPTY,
     serialized_options=None,
   ),
 ])

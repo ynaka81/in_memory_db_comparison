@@ -3,6 +3,7 @@ from concurrent.futures import ThreadPoolExecutor
 
 import grpc
 from fasteners import ReaderWriterLock
+from google.protobuf import empty_pb2
 
 import db_pb2
 import db_pb2_grpc
@@ -29,7 +30,7 @@ class DB(db_pb2_grpc.DBServicer):
         with self.lock.write_lock():
             for record in request.records:
                 self.records[record.index] = record.value
-        return request
+        return empty_pb2.Empty()
 
 
 def serve():

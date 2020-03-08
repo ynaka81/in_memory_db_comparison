@@ -50,17 +50,13 @@ impl Db for DbImpl {
         Ok(Response::new(records))
     }
 
-    async fn update(&self, request: Request<Records>) -> Result<Response<Records>, Status> {
-        let q_records = request.into_inner().records;
+    async fn update(&self, request: Request<Records>) -> Result<Response<()>, Status> {
         let mut records = self.records.write().unwrap();
-        for q_record in q_records.iter() {
-            records[q_record.index as usize] = q_record.value;
-        };
-        let records = Records {
-            records: q_records
+        for record in request.into_inner().records {
+            records[record.index as usize] = record.value;
         };
 
-        Ok(Response::new(records))
+        Ok(Response::new(()))
     }
 }
 
