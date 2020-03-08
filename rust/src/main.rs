@@ -61,7 +61,7 @@ impl Db for DbImpl {
 }
 
 // Run gRPC server.
-#[tokio::main]
+#[tokio::main(core_threads = 16)]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let addr = "[::1]:50051".parse()?;
     let db = DbImpl::default();
