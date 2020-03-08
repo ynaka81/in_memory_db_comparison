@@ -38,7 +38,7 @@ def run(name, parallel):
     # Start to measure performance.
     N = int(1e6)
     with ThreadPoolExecutor(max_workers=parallel) as executor:
-        for i in range(parallel * 10):
+        for i in range(parallel * 100):
             old = random.randint(0, N)
             new = random.randint(0, N)
             executor.submit(send_request, old, new)
