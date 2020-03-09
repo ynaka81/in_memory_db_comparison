@@ -20,6 +20,11 @@ class DBStub(object):
         request_serializer=db__pb2.Value.SerializeToString,
         response_deserializer=db__pb2.Records.FromString,
         )
+    self.Add = channel.unary_unary(
+        '/db.DB/Add',
+        request_serializer=db__pb2.Value.SerializeToString,
+        response_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
+        )
     self.Update = channel.unary_unary(
         '/db.DB/Update',
         request_serializer=db__pb2.Records.SerializeToString,
@@ -33,6 +38,13 @@ class DBServicer(object):
 
   def Search(self, request, context):
     """Search record.
+    """
+    context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+    context.set_details('Method not implemented!')
+    raise NotImplementedError('Method not implemented!')
+
+  def Add(self, request, context):
+    """Add record.
     """
     context.set_code(grpc.StatusCode.UNIMPLEMENTED)
     context.set_details('Method not implemented!')
@@ -52,6 +64,11 @@ def add_DBServicer_to_server(servicer, server):
           servicer.Search,
           request_deserializer=db__pb2.Value.FromString,
           response_serializer=db__pb2.Records.SerializeToString,
+      ),
+      'Add': grpc.unary_unary_rpc_method_handler(
+          servicer.Add,
+          request_deserializer=db__pb2.Value.FromString,
+          response_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
       ),
       'Update': grpc.unary_unary_rpc_method_handler(
           servicer.Update,

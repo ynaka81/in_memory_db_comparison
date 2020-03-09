@@ -26,6 +26,11 @@ class DB(db_pb2_grpc.DBServicer):
             ]
         return db_pb2.Records(records=records)
 
+    def Add(self, request, context):
+        with self.lock.write_lock():
+            self.records.append(request.value)
+        return empty_pb2.Empty()
+
     def Update(self, request, context):
         with self.lock.write_lock():
             for record in request.records:

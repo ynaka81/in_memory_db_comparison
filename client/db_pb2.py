@@ -19,7 +19,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   package='db',
   syntax='proto3',
   serialized_options=None,
-  serialized_pb=b'\n\x08\x64\x62.proto\x12\x02\x64\x62\x1a\x1bgoogle/protobuf/empty.proto\"&\n\x07Records\x12\x1b\n\x07records\x18\x01 \x03(\x0b\x32\n.db.Record\"&\n\x06Record\x12\r\n\x05index\x18\x01 \x01(\x05\x12\r\n\x05value\x18\x02 \x01(\x05\"\x16\n\x05Value\x12\r\n\x05value\x18\x01 \x01(\x05\x32Y\n\x02\x44\x42\x12\"\n\x06Search\x12\t.db.Value\x1a\x0b.db.Records\"\x00\x12/\n\x06Update\x12\x0b.db.Records\x1a\x16.google.protobuf.Empty\"\x00\x62\x06proto3'
+  serialized_pb=b'\n\x08\x64\x62.proto\x12\x02\x64\x62\x1a\x1bgoogle/protobuf/empty.proto\"&\n\x07Records\x12\x1b\n\x07records\x18\x01 \x03(\x0b\x32\n.db.Record\"&\n\x06Record\x12\r\n\x05index\x18\x01 \x01(\x05\x12\r\n\x05value\x18\x02 \x01(\x05\"\x16\n\x05Value\x12\r\n\x05value\x18\x01 \x01(\x05\x32\x85\x01\n\x02\x44\x42\x12\"\n\x06Search\x12\t.db.Value\x1a\x0b.db.Records\"\x00\x12*\n\x03\x41\x64\x64\x12\t.db.Value\x1a\x16.google.protobuf.Empty\"\x00\x12/\n\x06Update\x12\x0b.db.Records\x1a\x16.google.protobuf.Empty\"\x00\x62\x06proto3'
   ,
   dependencies=[google_dot_protobuf_dot_empty__pb2.DESCRIPTOR,])
 
@@ -160,8 +160,8 @@ _DB = _descriptor.ServiceDescriptor(
   file=DESCRIPTOR,
   index=0,
   serialized_options=None,
-  serialized_start=149,
-  serialized_end=238,
+  serialized_start=150,
+  serialized_end=283,
   methods=[
   _descriptor.MethodDescriptor(
     name='Search',
@@ -173,9 +173,18 @@ _DB = _descriptor.ServiceDescriptor(
     serialized_options=None,
   ),
   _descriptor.MethodDescriptor(
+    name='Add',
+    full_name='db.DB.Add',
+    index=1,
+    containing_service=None,
+    input_type=_VALUE,
+    output_type=google_dot_protobuf_dot_empty__pb2._EMPTY,
+    serialized_options=None,
+  ),
+  _descriptor.MethodDescriptor(
     name='Update',
     full_name='db.DB.Update',
-    index=1,
+    index=2,
     containing_service=None,
     input_type=_RECORDS,
     output_type=google_dot_protobuf_dot_empty__pb2._EMPTY,

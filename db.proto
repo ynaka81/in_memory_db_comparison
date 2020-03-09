@@ -8,6 +8,8 @@ package db;
 service DB {
   // Search record.
   rpc Search (Value) returns (Records) {}
+  // Add record.
+  rpc Add(Value) returns (google.protobuf.Empty) {}
   // Update record.
   rpc Update(Records) returns (google.protobuf.Empty) {}
 }

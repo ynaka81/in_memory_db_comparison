@@ -50,6 +50,13 @@ impl Db for DbImpl {
         Ok(Response::new(records))
     }
 
+    async fn add(&self, request: Request<Value>) -> Result<Response<()>, Status> {
+        let value = request.into_inner().value;
+        self.records.write().unwrap().push(value);
+
+        Ok(Response::new(()))
+    }
+
     async fn update(&self, request: Request<Records>) -> Result<Response<()>, Status> {
         let mut records = self.records.write().unwrap();
         for record in request.into_inner().records {

@@ -48,6 +48,13 @@ func (s *Server) Search(ctx context.Context, in *pb.Value) (*pb.Records, error) 
 	return &pb.Records{Records: records}, nil
 }
 
+func (s *Server) Add(ctx context.Context, in *pb.Value) (*empty.Empty, error) {
+	s.Lock()
+	s.records = append(s.records, in.GetValue())
+	s.Unlock()
+	return &empty.Empty{}, nil
+}
+
 func (s *Server) Update(ctx context.Context, in *pb.Records) (*empty.Empty, error) {
 	s.Lock()
 	for _, record := range in.GetRecords() {
