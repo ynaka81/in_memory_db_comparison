@@ -1,6 +1,7 @@
-use std::sync::{Arc, RwLock};
+use std::sync::Arc;
 use rand::Rng;
 use tonic::{transport::Server, Request, Response, Status};
+use tokio::sync::RwLock;
 
 use db::db_server::{Db, DbServer};
 use db::{Records, Record, Value};
@@ -33,7 +34,7 @@ impl DbImpl {
 impl Db for DbImpl {
     async fn search(&self, request: Request<Value>) -> Result<Response<Records>, Status> {
         let query = request.into_inner().value;
-        let records = self.records.read().unwrap().iter().enumerate().filter_map(
+        let records = self.records.read().await.iter().enumerate().filter_map(
             |(i, &value)|
             if value == query {
                 Some(Record {
@@ -52,13 +53,13 @@ impl Db for DbImpl {
 
     async fn add(&self, request: Request<Value>) -> Result<Response<()>, Status> {
         let value = request.into_inner().value;
-        self.records.write().unwrap().push(value);
+        self.records.write().await.push(value);
 
         Ok(Response::new(()))
     }
 
     async fn update(&self, request: Request<Records>) -> Result<Response<()>, Status> {
-        let mut records = self.records.write().unwrap();
+        let mut records = self.records.write().await;
         for record in request.into_inner().records {
             records[record.index as usize] = record.value;
         };
