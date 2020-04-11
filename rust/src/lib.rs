@@ -30,8 +30,9 @@ impl DbCommon {
     }
 
     #[inline]
-    fn search<'a>(query: i32, records: impl Iterator<Item = &'a i32>) -> Records {
+    fn search(query: i32, records: &[i32]) -> Records {
         let records = records
+            .iter()
             .enumerate()
             .filter_map(|(i, &value)| {
                 if value == query {
@@ -82,7 +83,7 @@ impl DbDesc for AsyncStdDb {
 impl Db for AsyncStdDb {
     async fn search(&self, request: Request<Value>) -> Result<Response<Records>, Status> {
         let query = request.into_inner().value;
-        let records = DbCommon::search(query, self.records.read().await.iter());
+        let records = DbCommon::search(query, &self.records.read().await);
 
         Ok(Response::new(records))
     }
@@ -130,7 +131,7 @@ impl DbDesc for StdDb {
 impl Db for StdDb {
     async fn search(&self, request: Request<Value>) -> Result<Response<Records>, Status> {
         let query = request.into_inner().value;
-        let records = DbCommon::search(query, self.records.read().unwrap().iter());
+        let records = DbCommon::search(query, &self.records.read().unwrap());
 
         Ok(Response::new(records))
     }
@@ -178,7 +179,7 @@ impl DbDesc for TokioDb {
 impl Db for TokioDb {
     async fn search(&self, request: Request<Value>) -> Result<Response<Records>, Status> {
         let query = request.into_inner().value;
-        let records = DbCommon::search(query, self.records.read().await.iter());
+        let records = DbCommon::search(query, &self.records.read().await);
 
         Ok(Response::new(records))
     }
