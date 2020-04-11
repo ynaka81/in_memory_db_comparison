@@ -1,10 +1,12 @@
 [package]
-name = "rust"
+name = "rust-server"
 version = "0.1.0"
 authors = []
 edition = "2018"
 
 [dependencies]
+async-std = "1.5"
+clap = "2.33"
 rand  = "0.7"
 tonic = "0.1"
 prost = "0.6"
