@@ -23,12 +23,28 @@ go$ go run main.go
 
 #### Rust
 ```bash
+# Running the server with 16 core threads and a DB implementation
+# called `std` which employs `std::sync::RwLock` for locking the DB.
 $ cd rust
-rust$ cargo run --release
+rust$ cargo run --release -- -p 16 std
     Finished release [optimized] target(s) in 0.05s
      Running `target/release/rust`
+Created the async runtime with 16 core threads.
+Listening to [::]:50051 using StdDb (with std::sync::RwLock).
 ```
 
+For more information about the command line arguments, see `cargo run --release -- --help`.
+
+Each DB implementation employs different `RwLock`.
+Currently the following DB implementations are available:
+
+| DB impl    | RwLock                    | Async aware lock? | Locking policy          |
+|:-----------|:------------------------- |:------------------|:----------------------- |
+| `std`      | `std::sync::RwLock`       | no                | OS dependent. On Linux, it will be read-preferring. |
+| `asyncstd` | `async_std::sync::RwLock` | yes               | read-preferring         |
+| `tokio`    | `tokio::sync::RwLock`     | yes               | fair (write-preferring) |
+
+In the above blog article, `std` was used.
 
 ### Measure performance by client
 You can measure the performance of each language with the following command.

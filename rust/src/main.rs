@@ -1,83 +1,74 @@
-use std::sync::Arc;
-use rand::Rng;
-use tonic::{transport::Server, Request, Response, Status};
-use tokio::sync::RwLock;
+use clap::{arg_enum, value_t, App, Arg};
+use std::net::SocketAddr;
+use tokio::runtime;
+use tonic::transport::Server;
 
-use db::db_server::{Db, DbServer};
-use db::{Records, Record, Value};
+use rust_server::{
+    db::db_server::{Db, DbServer},
+    AsyncStdDb, DbDesc, StdDb, TokioDb,
+};
 
-pub mod db {
-    tonic::include_proto!("db");
-}
-
-// Define DbImpl as implementation of DB package.
-#[derive(Debug, Default)]
-pub struct DbImpl {
-    records: Arc<RwLock<Vec<i32>>>,
-}
-
-// Initialize with random records.
-impl DbImpl {
-    fn default() -> Self {
-        const N: i32 = 1e6 as i32;
-        let mut rng = rand::thread_rng();
-        let records: Vec<i32> = (0..N).map(|_| rng.gen_range(0, N / 10)).collect();
-
-        DbImpl {
-            records: Arc::new(RwLock::new(records))
-        }
-    }
-}
-
-// Implement RPC methods.
-#[tonic::async_trait]
-impl Db for DbImpl {
-    async fn search(&self, request: Request<Value>) -> Result<Response<Records>, Status> {
-        let query = request.into_inner().value;
-        let records = self.records.read().await.iter().enumerate().filter_map(
-            |(i, &value)|
-            if value == query {
-                Some(Record {
-                    index: i as i32,
-                    value: value
-                })
-            } else {
-                None
-            }).collect();
-        let records = Records {
-            records
-        };
-
-        Ok(Response::new(records))
-    }
-
-    async fn add(&self, request: Request<Value>) -> Result<Response<()>, Status> {
-        let value = request.into_inner().value;
-        self.records.write().await.push(value);
-
-        Ok(Response::new(()))
-    }
-
-    async fn update(&self, request: Request<Records>) -> Result<Response<()>, Status> {
-        let mut records = self.records.write().await;
-        for record in request.into_inner().records {
-            records[record.index as usize] = record.value;
-        };
-
-        Ok(Response::new(()))
+arg_enum! {
+    #[derive(PartialEq, Debug)]
+    pub enum DbImpl {
+        AsyncStd,
+        Std,
+        Tokio,
     }
 }
 
 // Run gRPC server.
-#[tokio::main(core_threads = 16)]
-async fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let addr = "[::0]:50051".parse()?;
-    let db = DbImpl::default();
+fn main() -> Result<(), Box<dyn std::error::Error>> {
+    let matches = App::new("rust-server")
+        .arg(
+            Arg::with_name("parallel")
+                .short("p")
+                .long("parallel")
+                .value_name("PARALLEL")
+                .takes_value(true)
+                .help("Number of the core threads for the async runtime. [default: 16]"),
+        )
+        .arg(
+            Arg::with_name("DB-IMPL")
+                .index(1)
+                .required(true)
+                .possible_values(&["tokio", "asyncstd", "std"])
+                .case_insensitive(true)
+                .help("DB implementation"),
+        )
+        .get_matches();
 
+    let addr = "[::0]:50051".parse()?;
+    let db_impl = value_t!(matches, "DB-IMPL", DbImpl).unwrap_or_else(|e| e.exit());
+    let core_threads = matches
+        .value_of("PARALLEL")
+        .unwrap_or("16")
+        .parse::<usize>()?;
+
+    let mut rt = runtime::Builder::new()
+        .threaded_scheduler()
+        .core_threads(core_threads)
+        .enable_all()
+        .build()?;
+
+    println!(
+        "Created the async runtime with {} core threads.",
+        core_threads
+    );
+
+    match db_impl {
+        DbImpl::AsyncStd => rt.block_on(run_server(addr, AsyncStdDb::default()))?,
+        DbImpl::Std => rt.block_on(run_server(addr, StdDb::default()))?,
+        DbImpl::Tokio => rt.block_on(run_server(addr, TokioDb::default()))?,
+    }
+
+    Ok(())
+}
+
+async fn run_server(addr: SocketAddr, db: impl Db + DbDesc) -> Result<(), tonic::transport::Error> {
+    println!("Listening to {} using {}.", addr, db.description());
     Server::builder()
         .add_service(DbServer::new(db))
         .serve(addr)
-        .await?;
-
-    Ok(())
+        .await
 }
