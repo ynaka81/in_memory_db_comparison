@@ -9,9 +9,11 @@ service DB {
   // Search record.
   rpc Search (Value) returns (Records) {}
   // Add record.
-  rpc Add(Value) returns (google.protobuf.Empty) {}
+  rpc Add (Values) returns (google.protobuf.Empty) {}
   // Update record.
-  rpc Update(Records) returns (google.protobuf.Empty) {}
+  rpc Update (Records) returns (google.protobuf.Empty) {}
+  // Delete record.
+  rpc Delete (Indexes) returns (google.protobuf.Empty) {}
 }
 
 // DB records.
@@ -28,4 +30,14 @@ message Record {
 // The value of record.
 message Value {
   int32 value = 1;
+}
+
+// The list of record value.
+message Values {
+  repeated int32 values = 1;
+}
+
+// The list of record indexes.
+message Indexes {
+  repeated int32 indexes = 1;
 }

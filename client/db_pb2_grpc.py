@@ -22,12 +22,17 @@ class DBStub(object):
         )
     self.Add = channel.unary_unary(
         '/db.DB/Add',
-        request_serializer=db__pb2.Value.SerializeToString,
+        request_serializer=db__pb2.Values.SerializeToString,
         response_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
         )
     self.Update = channel.unary_unary(
         '/db.DB/Update',
         request_serializer=db__pb2.Records.SerializeToString,
+        response_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
+        )
+    self.Delete = channel.unary_unary(
+        '/db.DB/Delete',
+        request_serializer=db__pb2.Indexes.SerializeToString,
         response_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
         )
 
@@ -57,6 +62,13 @@ class DBServicer(object):
     context.set_details('Method not implemented!')
     raise NotImplementedError('Method not implemented!')
 
+  def Delete(self, request, context):
+    """Delete record.
+    """
+    context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+    context.set_details('Method not implemented!')
+    raise NotImplementedError('Method not implemented!')
+
 
 def add_DBServicer_to_server(servicer, server):
   rpc_method_handlers = {
@@ -67,12 +79,17 @@ def add_DBServicer_to_server(servicer, server):
       ),
       'Add': grpc.unary_unary_rpc_method_handler(
           servicer.Add,
-          request_deserializer=db__pb2.Value.FromString,
+          request_deserializer=db__pb2.Values.FromString,
           response_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
       ),
       'Update': grpc.unary_unary_rpc_method_handler(
           servicer.Update,
           request_deserializer=db__pb2.Records.FromString,
+          response_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
+      ),
+      'Delete': grpc.unary_unary_rpc_method_handler(
+          servicer.Delete,
+          request_deserializer=db__pb2.Indexes.FromString,
           response_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
       ),
   }

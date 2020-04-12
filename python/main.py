@@ -28,13 +28,20 @@ class DB(db_pb2_grpc.DBServicer):
 
     def Add(self, request, context):
         with self.lock.write_lock():
-            self.records.append(request.value)
+            for value in request.values:
+                self.records.append(value)
         return empty_pb2.Empty()
 
     def Update(self, request, context):
         with self.lock.write_lock():
             for record in request.records:
                 self.records[record.index] = record.value
+        return empty_pb2.Empty()
+
+    def Delete(self, request, context):
+        with self.lock.write_lock():
+            for index in request.indexes:
+                del self.records[index]
         return empty_pb2.Empty()
 
 

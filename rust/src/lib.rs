@@ -10,7 +10,7 @@ use async_std::sync::RwLock as AsyncStdRwLock;
 use std::sync::RwLock as StdRwLock;
 use tokio::sync::RwLock as TokioRwLock;
 
-use db::{db_server::Db, Record, Records, Value};
+use db::{db_server::Db, Record, Records, Value, Values, Indexes};
 
 pub mod db {
     tonic::include_proto!("db");
@@ -49,9 +49,23 @@ impl DbCommon {
     }
 
     #[inline]
+    fn add(values: &[i32], records: &mut Vec<i32>) {
+        for &value in values {
+            records.push(value);
+        }
+    }
+
+    #[inline]
     fn update(updates: &[Record], records: &mut [i32]) {
         for record in updates {
             records[record.index as usize] = record.value;
+        }
+    }
+
+    #[inline]
+    fn delete(indexes: &[i32], records: &mut Vec<i32>) {
+        for &index in indexes {
+            records.remove(index as usize);
         }
     }
 }
@@ -88,9 +102,11 @@ impl Db for AsyncStdDb {
         Ok(Response::new(records))
     }
 
-    async fn add(&self, request: Request<Value>) -> Result<Response<()>, Status> {
-        let value = request.into_inner().value;
-        self.records.write().await.push(value);
+    async fn add(&self, request: Request<Values>) -> Result<Response<()>, Status> {
+        DbCommon::add(
+            &request.into_inner().values,
+            &mut *self.records.write().await,
+        );
 
         Ok(Response::new(()))
     }
@@ -100,6 +116,16 @@ impl Db for AsyncStdDb {
             &request.into_inner().records,
             &mut self.records.write().await,
         );
+
+        Ok(Response::new(()))
+    }
+
+    async fn delete(&self, request: Request<Indexes>) -> Result<Response<()>, Status> {
+        DbCommon::delete(
+            &request.into_inner().indexes,
+            &mut *self.records.write().await,
+        );
+
         Ok(Response::new(()))
     }
 }
@@ -136,9 +162,11 @@ impl Db for StdDb {
         Ok(Response::new(records))
     }
 
-    async fn add(&self, request: Request<Value>) -> Result<Response<()>, Status> {
-        let value = request.into_inner().value;
-        self.records.write().unwrap().push(value);
+    async fn add(&self, request: Request<Values>) -> Result<Response<()>, Status> {
+        DbCommon::add(
+            &request.into_inner().values,
+            &mut self.records.write().unwrap(),
+        );
 
         Ok(Response::new(()))
     }
@@ -148,6 +176,16 @@ impl Db for StdDb {
             &request.into_inner().records,
             &mut self.records.write().unwrap(),
         );
+
+        Ok(Response::new(()))
+    }
+
+    async fn delete(&self, request: Request<Indexes>) -> Result<Response<()>, Status> {
+        DbCommon::delete(
+            &request.into_inner().indexes,
+            &mut self.records.write().unwrap(),
+        );
+
         Ok(Response::new(()))
     }
 }
@@ -184,9 +222,11 @@ impl Db for TokioDb {
         Ok(Response::new(records))
     }
 
-    async fn add(&self, request: Request<Value>) -> Result<Response<()>, Status> {
-        let value = request.into_inner().value;
-        self.records.write().await.push(value);
+    async fn add(&self, request: Request<Values>) -> Result<Response<()>, Status> {
+        DbCommon::add(
+            &request.into_inner().values,
+            &mut *self.records.write().await,
+        );
 
         Ok(Response::new(()))
     }
@@ -196,6 +236,16 @@ impl Db for TokioDb {
             &request.into_inner().records,
             &mut self.records.write().await,
         );
+
+        Ok(Response::new(()))
+    }
+
+    async fn delete(&self, request: Request<Indexes>) -> Result<Response<()>, Status> {
+        DbCommon::delete(
+            &request.into_inner().indexes,
+            &mut *self.records.write().await,
+        );
+
         Ok(Response::new(()))
     }
 }

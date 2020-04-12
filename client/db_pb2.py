@@ -19,7 +19,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   package='db',
   syntax='proto3',
   serialized_options=None,
-  serialized_pb=b'\n\x08\x64\x62.proto\x12\x02\x64\x62\x1a\x1bgoogle/protobuf/empty.proto\"&\n\x07Records\x12\x1b\n\x07records\x18\x01 \x03(\x0b\x32\n.db.Record\"&\n\x06Record\x12\r\n\x05index\x18\x01 \x01(\x05\x12\r\n\x05value\x18\x02 \x01(\x05\"\x16\n\x05Value\x12\r\n\x05value\x18\x01 \x01(\x05\x32\x85\x01\n\x02\x44\x42\x12\"\n\x06Search\x12\t.db.Value\x1a\x0b.db.Records\"\x00\x12*\n\x03\x41\x64\x64\x12\t.db.Value\x1a\x16.google.protobuf.Empty\"\x00\x12/\n\x06Update\x12\x0b.db.Records\x1a\x16.google.protobuf.Empty\"\x00\x62\x06proto3'
+  serialized_pb=b'\n\x08\x64\x62.proto\x12\x02\x64\x62\x1a\x1bgoogle/protobuf/empty.proto\"&\n\x07Records\x12\x1b\n\x07records\x18\x01 \x03(\x0b\x32\n.db.Record\"&\n\x06Record\x12\r\n\x05index\x18\x01 \x01(\x05\x12\r\n\x05value\x18\x02 \x01(\x05\"\x16\n\x05Value\x12\r\n\x05value\x18\x01 \x01(\x05\"\x18\n\x06Values\x12\x0e\n\x06values\x18\x01 \x03(\x05\"\x1a\n\x07Indexes\x12\x0f\n\x07indexes\x18\x01 \x03(\x05\x32\xb7\x01\n\x02\x44\x42\x12\"\n\x06Search\x12\t.db.Value\x1a\x0b.db.Records\"\x00\x12+\n\x03\x41\x64\x64\x12\n.db.Values\x1a\x16.google.protobuf.Empty\"\x00\x12/\n\x06Update\x12\x0b.db.Records\x1a\x16.google.protobuf.Empty\"\x00\x12/\n\x06\x44\x65lete\x12\x0b.db.Indexes\x1a\x16.google.protobuf.Empty\"\x00\x62\x06proto3'
   ,
   dependencies=[google_dot_protobuf_dot_empty__pb2.DESCRIPTOR,])
 
@@ -125,10 +125,74 @@ _VALUE = _descriptor.Descriptor(
   serialized_end=147,
 )
 
+
+_VALUES = _descriptor.Descriptor(
+  name='Values',
+  full_name='db.Values',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='values', full_name='db.Values.values', index=0,
+      number=1, type=5, cpp_type=1, label=3,
+      has_default_value=False, default_value=[],
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=149,
+  serialized_end=173,
+)
+
+
+_INDEXES = _descriptor.Descriptor(
+  name='Indexes',
+  full_name='db.Indexes',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='indexes', full_name='db.Indexes.indexes', index=0,
+      number=1, type=5, cpp_type=1, label=3,
+      has_default_value=False, default_value=[],
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=175,
+  serialized_end=201,
+)
+
 _RECORDS.fields_by_name['records'].message_type = _RECORD
 DESCRIPTOR.message_types_by_name['Records'] = _RECORDS
 DESCRIPTOR.message_types_by_name['Record'] = _RECORD
 DESCRIPTOR.message_types_by_name['Value'] = _VALUE
+DESCRIPTOR.message_types_by_name['Values'] = _VALUES
+DESCRIPTOR.message_types_by_name['Indexes'] = _INDEXES
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
 Records = _reflection.GeneratedProtocolMessageType('Records', (_message.Message,), {
@@ -152,6 +216,20 @@ Value = _reflection.GeneratedProtocolMessageType('Value', (_message.Message,), {
   })
 _sym_db.RegisterMessage(Value)
 
+Values = _reflection.GeneratedProtocolMessageType('Values', (_message.Message,), {
+  'DESCRIPTOR' : _VALUES,
+  '__module__' : 'db_pb2'
+  # @@protoc_insertion_point(class_scope:db.Values)
+  })
+_sym_db.RegisterMessage(Values)
+
+Indexes = _reflection.GeneratedProtocolMessageType('Indexes', (_message.Message,), {
+  'DESCRIPTOR' : _INDEXES,
+  '__module__' : 'db_pb2'
+  # @@protoc_insertion_point(class_scope:db.Indexes)
+  })
+_sym_db.RegisterMessage(Indexes)
+
 
 
 _DB = _descriptor.ServiceDescriptor(
@@ -160,8 +238,8 @@ _DB = _descriptor.ServiceDescriptor(
   file=DESCRIPTOR,
   index=0,
   serialized_options=None,
-  serialized_start=150,
-  serialized_end=283,
+  serialized_start=204,
+  serialized_end=387,
   methods=[
   _descriptor.MethodDescriptor(
     name='Search',
@@ -177,7 +255,7 @@ _DB = _descriptor.ServiceDescriptor(
     full_name='db.DB.Add',
     index=1,
     containing_service=None,
-    input_type=_VALUE,
+    input_type=_VALUES,
     output_type=google_dot_protobuf_dot_empty__pb2._EMPTY,
     serialized_options=None,
   ),
@@ -187,6 +265,15 @@ _DB = _descriptor.ServiceDescriptor(
     index=2,
     containing_service=None,
     input_type=_RECORDS,
+    output_type=google_dot_protobuf_dot_empty__pb2._EMPTY,
+    serialized_options=None,
+  ),
+  _descriptor.MethodDescriptor(
+    name='Delete',
+    full_name='db.DB.Delete',
+    index=3,
+    containing_service=None,
+    input_type=_INDEXES,
     output_type=google_dot_protobuf_dot_empty__pb2._EMPTY,
     serialized_options=None,
   ),

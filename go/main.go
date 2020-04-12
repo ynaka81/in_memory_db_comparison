@@ -48,9 +48,11 @@ func (s *Server) Search(ctx context.Context, in *pb.Value) (*pb.Records, error) 
 	return &pb.Records{Records: records}, nil
 }
 
-func (s *Server) Add(ctx context.Context, in *pb.Value) (*empty.Empty, error) {
+func (s *Server) Add(ctx context.Context, in *pb.Values) (*empty.Empty, error) {
 	s.Lock()
-	s.records = append(s.records, in.GetValue())
+	for _, value := range in.GetValues() {
+		s.records = append(s.records, value)
+	}
 	s.Unlock()
 	return &empty.Empty{}, nil
 }
@@ -59,6 +61,15 @@ func (s *Server) Update(ctx context.Context, in *pb.Records) (*empty.Empty, erro
 	s.Lock()
 	for _, record := range in.GetRecords() {
 		s.records[record.GetIndex()] = record.GetValue()
+	}
+	s.Unlock()
+	return &empty.Empty{}, nil
+}
+
+func (s *Server) Delete(ctx context.Context, in *pb.Indexes) (*empty.Empty, error) {
+	s.Lock()
+	for _, index := range in.GetIndexes() {
+		s.records = append(s.records[:index], s.records[index + 1:]...)
 	}
 	s.Unlock()
 	return &empty.Empty{}, nil

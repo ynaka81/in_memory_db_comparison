@@ -1,4 +1,5 @@
 import logging
+import sys
 import time
 from concurrent.futures import ThreadPoolExecutor
 
@@ -21,7 +22,7 @@ def test_add(query, value, cycle):
             logger.info('receive request.', extra={'type': 'read', 'elapsed': time.time() - start})
             # Add a record.
             start = time.time()
-            stub.Add(db_pb2.Value(value=value))
+            stub.Add(db_pb2.Values(values=[value]))
             logger.info('receive request.', extra={'type': 'write', 'elapsed': time.time() - start})
 
 
@@ -42,9 +43,29 @@ def test_update(query, value, cycle):
             logger.info('receive request.', extra={'type': 'write', 'elapsed': time.time() - start})
 
 
+def test_delete(query, value, cycle):
+    for _ in range(cycle):
+        with grpc.insecure_channel('localhost:50051') as channel:
+            stub = db_pb2_grpc.DBStub(channel)
+            # Search records.
+            start = time.time()
+            response = stub.Search(db_pb2.Value(value=query))
+            logger.info('receive request.', extra={'type': 'read', 'elapsed': time.time() - start})
+            # # Add records.
+            values = db_pb2.Values(values=[r.value for r in response.records])
+            values = db_pb2.Indexes(indexes=[r.index for r in response.records])
+            start = time.time()
+            stub.Add(values)
+            logger.info('receive request.', extra={'type': 'write', 'elapsed': time.time() - start})
+            # Delete searched records.
+            indexes = db_pb2.Indexes(indexes=[r.index for r in response.records])
+            stub.Delete(indexes)
+
+
 test_methods = {
     'add': test_add,
-    'update': test_update
+    'update': test_update,
+    'delete': test_delete
 }
 
 
@@ -71,7 +92,7 @@ if __name__ == '__main__':
     # Setup logging.
     logger = logging.getLogger()
     formatter = jsonlogger.JsonFormatter('(levelname) (asctime) (pathname) (lineno) (message)')
-    handler = logging.StreamHandler()
+    handler = logging.StreamHandler(sys.stdout)
     handler.setFormatter(formatter)
     logger.addHandler(handler)
     logger.setLevel(logging.INFO)
